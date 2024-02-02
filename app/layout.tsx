@@ -1,8 +1,13 @@
-import SampleForm from "./components/SampleForm";
+import './globals.css'
 
-export default function Home() {
-  return (<>
-    <h1>Home</h1>
-    <SampleForm/>
-  </>)
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="ja">
+      <body>{children}</body>
+    </html>
+  )
 }
