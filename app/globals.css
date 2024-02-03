@@ -1,3 +1,13 @@
+
+body{
+	margin: 0 auto;
+	width:1200px;
+	max-width: 100%;		
+	word-break: break-all;
+}
+a:hover, a:active{
+	cursor: pointer;
+}
 #myForm div.formElement{
 	padding:5px;
 	margin:12px 0px;
@@ -44,4 +54,25 @@
 }
 .shadowBt:hover, .shadowBt:active{
 	box-shadow: none;
+}
+.decorationLink{
+	display:inline-block;
+	margin: 5px;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 5px;
+	text-shadow: 0 1px 0 #FFABCE,
+	0 2px 0 #999,
+	0 2px 0 #999,
+	0 2px 0 #999,
+	0 2px 0 #999,
+	0 2px 0 #000;
+}
+.decorationLink, .decorationLink:active{
+	text-shadow: 0 1px 0 #FFABCE,
+	0 1px 0 #999,
+	0 1px 0 #999,
+	0 1px 0 #999,
+	0 1px 0 #999,
+	0 1px 0 #000;
 }
