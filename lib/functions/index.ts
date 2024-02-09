@@ -25,3 +25,14 @@ export const validationForName = (str:string):[boolean,string] => {
     //成功!!
     return [true,''];
 }
+
+//メールアドレスのバリデーション
+export const validationForMail = (str:string):[boolean,string] => {
+    //長さ1～50の範囲
+    if(str.length===0 || str.length>50)return [false,'1～50字以内のメールアドレを入力して下さい'];
+    //email形式
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const result = emailRegex.test(str);
+    if(!result)return [false,'有効なメールアドレスの形式でありません'];
+    return [true,'']
+}

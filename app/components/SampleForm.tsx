@@ -1,12 +1,13 @@
 'use client'
 import { useState,ChangeEvent, MouseEvent, useRef } from 'react'
 import AlertError from './AlertError'
-import { validationForName, validationForWord } from '@/lib/functions'
+import { validationForName, validationForWord, validationForMail } from '@/lib/functions'
 
 type CreateUserForm = {
     title:[string,string]
     familyName:[string,string]
     firstName:[string,string]
+    email:[string,string]
 }
 
 const SampleForm = () => {
@@ -16,14 +17,15 @@ const SampleForm = () => {
         title:['',''],
         familyName:['',''],
         firstName:['',''],
+        email:['',''],
     });
 
     const handleSubmit = async (e:MouseEvent<HTMLButtonElement>) => {
         try {
             e.preventDefault();
             if(error)setError('');
-            const {title,familyName,firstName} = formData;
-            if(!title[0] || !familyName[0] || !firstName[0])return alert('入力欄を埋めて下さい');
+            const {title,familyName,firstName,email} = formData;
+            if(!title[0] || !familyName[0] || !firstName[0] || !email[0])return alert('入力欄を埋めて下さい');
             //////////
             //◆【バリデーション】
             let alertFlag = false;
@@ -45,8 +47,14 @@ const SampleForm = () => {
                 firstName[1]=result[1];
                 alertFlag = true;
             }
+            //email
+            result = validationForMail(email[0]);
+            if( !result[0] ){
+                email[1]=result[1];
+                alertFlag = true;
+            }
             //最終バリデーション
-            setFormData({title,familyName,firstName});
+            setFormData({title,familyName,firstName,email});
             if(alertFlag){
                 setError(`入力内容に問題があります`);
                 return alert('入力内容に問題があります');
@@ -122,6 +130,20 @@ const SampleForm = () => {
                         onChange={(e)=>handleChange(e)}
                     />
                     {formData.firstName[1] && <span className='formError'>{formData.firstName[1]}</span>}
+                </div>
+                <div className="formElement">
+                    <label>メールアドレス<em>*</em></label>
+                    <span className='formDescription'>メールアドレスを入力して下さい</span>
+                    <input
+                        name='email'
+                        type='text'
+                        defaultValue={formData.email[0]}
+                        required={true}
+                        placeholder="メールアドレス"
+                        className={formData.email[1] ? 'errorRed' : '' }
+                        onChange={(e)=>handleChange(e)}
+                    />
+                    {formData.email[1] && <span className='formError'>{formData.email[1]}</span>}
                 </div>
 
                 <div id='myFormExcutionBt'>
