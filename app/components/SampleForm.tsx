@@ -1,13 +1,14 @@
 'use client'
 import { useState,ChangeEvent, MouseEvent, useRef } from 'react'
 import AlertError from './AlertError'
-import { validationForName, validationForWord, validationForMail } from '@/lib/functions'
+import { validationForName, validationForWord, validationForMail,validationForPhoneNumber } from '@/lib/functions'
 
 type CreateUserForm = {
     title:[string,string]
     familyName:[string,string]
     firstName:[string,string]
     email:[string,string]
+    phoneNumber:[string,string]
 }
 
 const SampleForm = () => {
@@ -18,14 +19,15 @@ const SampleForm = () => {
         familyName:['',''],
         firstName:['',''],
         email:['',''],
+        phoneNumber:['',''],
     });
 
     const handleSubmit = async (e:MouseEvent<HTMLButtonElement>) => {
         try {
             e.preventDefault();
             if(error)setError('');
-            const {title,familyName,firstName,email} = formData;
-            if(!title[0] || !familyName[0] || !firstName[0] || !email[0])return alert('入力欄を埋めて下さい');
+            const {title,familyName,firstName,email,phoneNumber} = formData;
+            if(!title[0] || !familyName[0] || !firstName[0] || !email[0] || !phoneNumber[0])return alert('入力欄を埋めて下さい');
             //////////
             //◆【バリデーション】
             let alertFlag = false;
@@ -53,8 +55,14 @@ const SampleForm = () => {
                 email[1]=result[1];
                 alertFlag = true;
             }
+            //phoneNumber
+            result = validationForPhoneNumber(phoneNumber[0]);
+            if( !result[0] ){
+                phoneNumber[1]=result[1];
+                alertFlag = true;
+            }
             //最終バリデーション
-            setFormData({title,familyName,firstName,email});
+            setFormData({title,familyName,firstName,email,phoneNumber});
             if(alertFlag){
                 setError(`入力内容に問題があります`);
                 return alert('入力内容に問題があります');
@@ -144,6 +152,20 @@ const SampleForm = () => {
                         onChange={(e)=>handleChange(e)}
                     />
                     {formData.email[1] && <span className='formError'>{formData.email[1]}</span>}
+                </div>
+                <div className="formElement">
+                    <label>日本の携帯電話番号<em>*</em></label>
+                    <span className='formDescription'>070,080,090のいずれかで始まる日本の携帯番号</span>
+                    <input
+                        name='phoneNumber'
+                        type='text'
+                        defaultValue={formData.phoneNumber[0]}
+                        required={true}
+                        placeholder="日本の携帯電話番号"
+                        className={formData.phoneNumber[1] ? 'errorRed' : '' }
+                        onChange={(e)=>handleChange(e)}
+                    />
+                    {formData.phoneNumber[1] && <span className='formError'>{formData.phoneNumber[1]}</span>}
                 </div>
 
                 <div id='myFormExcutionBt'>

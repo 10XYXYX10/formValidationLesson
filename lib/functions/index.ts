@@ -36,3 +36,15 @@ export const validationForMail = (str:string):[boolean,string] => {
     if(!result)return [false,'有効なメールアドレスの形式でありません'];
     return [true,'']
 }
+
+//「070,080,090 + 8桁の」日本の携帯電話番号
+export const validationForPhoneNumber = (str:string):[boolean,string] => {
+    //11桁
+    if(str.length!==11)return [false,'11桁の半角数字を入力して下さい'];
+    //半角数字
+    const japanesePhoneNumberRegex = /^0[7-9]0\d{8}$/;
+    const result = japanesePhoneNumberRegex.test(str);
+    if(!result)return [false,'070,080,090のいずれかで始まる11桁の半角数字を入力して下さい'];
+    return [true,'']
+}
+
