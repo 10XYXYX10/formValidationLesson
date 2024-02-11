@@ -1,7 +1,7 @@
 'use client'
 import { useState,ChangeEvent, MouseEvent, useRef } from 'react'
 import AlertError from './AlertError'
-import { validationForName, validationForWord, validationForMail,validationForPhoneNumber } from '@/lib/functions'
+import { validationForName, validationForWord, validationForMail,validationForPhoneNumber,validationForPassword } from '@/lib/functions'
 
 type CreateUserForm = {
     title:[string,string]
@@ -9,6 +9,7 @@ type CreateUserForm = {
     firstName:[string,string]
     email:[string,string]
     phoneNumber:[string,string]
+    password:[string,string]
 }
 
 const SampleForm = () => {
@@ -20,14 +21,15 @@ const SampleForm = () => {
         firstName:['',''],
         email:['',''],
         phoneNumber:['',''],
+        password:['',''],
     });
 
     const handleSubmit = async (e:MouseEvent<HTMLButtonElement>) => {
         try {
             e.preventDefault();
             if(error)setError('');
-            const {title,familyName,firstName,email,phoneNumber} = formData;
-            if(!title[0] || !familyName[0] || !firstName[0] || !email[0] || !phoneNumber[0])return alert('入力欄を埋めて下さい');
+            const {title,familyName,firstName,email,phoneNumber,password} = formData;
+            if(!title[0] || !familyName[0] || !firstName[0] || !email[0] || !phoneNumber[0] || !password[0])return alert('入力欄を埋めて下さい');
             //////////
             //◆【バリデーション】
             let alertFlag = false;
@@ -61,8 +63,14 @@ const SampleForm = () => {
                 phoneNumber[1]=result[1];
                 alertFlag = true;
             }
+            //password
+            result = validationForPassword(password[0]);
+            if( !result[0] ){
+                password[1]=result[1];
+                alertFlag = true;
+            }
             //最終バリデーション
-            setFormData({title,familyName,firstName,email,phoneNumber});
+            setFormData({title,familyName,firstName,email,phoneNumber,password});
             if(alertFlag){
                 setError(`入力内容に問題があります`);
                 return alert('入力内容に問題があります');
@@ -167,6 +175,20 @@ const SampleForm = () => {
                     />
                     {formData.phoneNumber[1] && <span className='formError'>{formData.phoneNumber[1]}</span>}
                 </div>
+                <div className="formElement">
+                    <label>パスワード<em>*</em></label>
+                    <span className='formDescription'>5文字以上の半角or全角の英数字を入力して下さい</span>
+                    <input
+                        name='password'
+                        type='password'
+                        defaultValue={formData.password[0]}
+                        required={true}
+                        placeholder="パスワード"
+                        className={formData.password[1] ? 'errorRed' : '' }
+                        onChange={(e)=>handleChange(e)}
+                    />
+                    {formData.password[1] && <span className='formError'>{formData.password[1]}</span>}
+                </div> 
 
                 <div id='myFormExcutionBt'>
                     <button className='shadowBt' onClick={(e)=>handleSubmit(e)}>送信</button>

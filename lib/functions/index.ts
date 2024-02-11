@@ -48,3 +48,14 @@ export const validationForPhoneNumber = (str:string):[boolean,string] => {
     return [true,'']
 }
 
+//パスワードのバリデーション
+export const validationForPassword = (str:string):[boolean,string] => {
+    //長さ5～50の範囲
+    if(str.length<4 || str.length>51)return [false,'5～50字以内の半角or全角の英数字を入力して下さい'];
+    //email形式
+    const passwordRegex = /^[A-Za-z0-9ａ-ｚＡ-Ｚ０-９]+$/;
+    const result = passwordRegex.test(str);
+    if(!result)return [false,'半角or全角の英数字で入力して下さい'];
+    return [true,'']
+}
+
