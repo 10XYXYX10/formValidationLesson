@@ -10,6 +10,7 @@ type CreateUserForm = {
     email:[string,string]
     phoneNumber:[string,string]
     password:[string,string]
+    genruList:[string[],string]
 }
 
 const SampleForm = () => {
@@ -22,14 +23,15 @@ const SampleForm = () => {
         email:['',''],
         phoneNumber:['',''],
         password:['',''],
+        genruList:[[],''],
     });
 
     const handleSubmit = async (e:MouseEvent<HTMLButtonElement>) => {
         try {
             e.preventDefault();
             if(error)setError('');
-            const {title,familyName,firstName,email,phoneNumber,password} = formData;
-            if(!title[0] || !familyName[0] || !firstName[0] || !email[0] || !phoneNumber[0] || !password[0])return alert('入力欄を埋めて下さい');
+            const {familyName,firstName,email,phoneNumber,password,genruList,title} = formData;
+            if(!title[0] || !familyName[0] || !firstName[0] || !email[0] || !password[0])return alert('入力欄を埋めて下さい');
             //////////
             //◆【バリデーション】
             let alertFlag = false;
@@ -69,8 +71,13 @@ const SampleForm = () => {
                 password[1]=result[1];
                 alertFlag = true;
             }
+            //genruList
+            genruList[0] = genruList[0].filter((one)=>{
+              const result = validationForWord(one);
+              if(result[0])return one;
+            });
             //最終バリデーション
-            setFormData({title,familyName,firstName,email,phoneNumber,password});
+            setFormData({title,familyName,firstName,email,phoneNumber,password,genruList});
             if(alertFlag){
                 setError(`入力内容に問題があります`);
                 return alert('入力内容に問題があります');
@@ -100,6 +107,42 @@ const SampleForm = () => {
         const inputVal = e.target.value.trim();
         const inputName = e.target.name;
         setFormData({...formData,[inputName]:[inputVal,'']})
+    }
+
+    const addElement = (e:MouseEvent<HTMLButtonElement>,key:'genruList') => {
+        e.preventDefault();
+        if(error)setError('');
+        const currentForm = myForm.current;
+        if(currentForm){
+          const targetInput:HTMLInputElement|null = currentForm.querySelector(`input[name='${key}']`);
+          const targetFormEl:[string[],string] = formData[key]; 
+          if(targetInput && targetFormEl){
+            const value = targetInput.value.trim();
+            if(targetFormEl[0].includes(value)){
+              alert(`「${value}」は既に存在しています`);
+              return
+            }
+            const result = validationForWord(value,50);
+            if( !result[0] ){
+              targetFormEl[1]=result[1];
+              setError('入力内容に問題があります');
+              return alert('入力内容に問題があります');
+            }else{
+              targetFormEl[0].push(value);
+              targetFormEl[1]='';
+              setFormData({...formData,[key]:targetFormEl});
+              targetInput.value='';
+            }
+          }
+        }
+    }
+
+    const deleteElement = (e:MouseEvent<HTMLAnchorElement>,key:'genruList',word:string) => {
+        e.preventDefault();
+        const targetFormField:[string[],string] = formData[key]; 
+        const newArray = targetFormField[0].filter((one) => one!=word);
+        targetFormField[0]=newArray;
+        setFormData({...formData,[key]:targetFormField});
     }
 
     return (<>
@@ -188,7 +231,26 @@ const SampleForm = () => {
                         onChange={(e)=>handleChange(e)}
                     />
                     {formData.password[1] && <span className='formError'>{formData.password[1]}</span>}
-                </div> 
+                </div>    
+                <div className="formElement">
+                    <label>ジャンル</label>
+                    <span className='formDescription'>ジャンル(*最大８つまで)</span>
+                    {formData.genruList[0].length>0&&(<div>
+                    {formData.genruList[0].map((genru)=>(
+                        <a key={genru} className="arrayElement decorationLink" onClick={(e)=>{deleteElement(e,'genruList',genru)}}>{genru} ✖</a>
+                    ))}
+                    </div>)}
+                    <input
+                        name='genruList'
+                        type='text'
+                        required={true}
+                        placeholder="ジャンル"
+                        className={formData.genruList[1] ? 'errorRed' : '' }
+                    />
+                    <br/>
+                    <button onClick={(e)=>addElement(e,'genruList')} disabled={formData.genruList[0].length>=8}>追加</button>
+                    {formData.genruList[1] && <span className='formError'>{formData.genruList[1]}</span>}
+                </div>
 
                 <div id='myFormExcutionBt'>
                     <button className='shadowBt' onClick={(e)=>handleSubmit(e)}>送信</button>

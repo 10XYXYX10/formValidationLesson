@@ -59,3 +59,5 @@ export const validationForPassword = (str:string):[boolean,string] => {
     return [true,'']
 }
 
+
+
